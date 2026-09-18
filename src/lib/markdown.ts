@@ -29,7 +29,7 @@ function parseFrontmatterBlock(block: string): ResumeFrontmatter {
   return data as ResumeFrontmatter
 }
 
-export function parseResume(source: string): ParsedResume {
+function splitFrontmatter(source: string): { block: string | null; content: string } {
   const normalized = source.replace(/\r\n/g, '\n')
 
   if (normalized.startsWith(`${FRONTMATTER_DELIMITER}\n`)) {
@@ -38,12 +38,33 @@ export function parseResume(source: string): ParsedResume {
     if (closingIndex !== -1) {
       const block = normalized.slice(FRONTMATTER_DELIMITER.length + 1, closingIndex)
       const content = normalized.slice(closingIndex + FRONTMATTER_DELIMITER.length + 1)
-      return {
-        frontmatter: parseFrontmatterBlock(block),
-        content: content.trim(),
-      }
+      return { block, content }
     }
   }
 
-  return { frontmatter: {}, content: normalized.trim() }
+  return { block: null, content: normalized }
+}
+
+export function parseResume(source: string): ParsedResume {
+  const { block, content } = splitFrontmatter(source)
+  return {
+    frontmatter: block ? parseFrontmatterBlock(block) : {},
+    content: content.trim(),
+  }
+}
+
+/** Adds, replaces (value set) or removes (value `null`) a single frontmatter field, creating the block if needed. */
+export function upsertFrontmatterField(source: string, key: string, value: string | null): string {
+  const { block, content } = splitFrontmatter(source)
+  const trimmedContent = content.trim()
+
+  const existingLines = (block ?? '').split('\n').filter((line) => line.trim().length > 0)
+  const otherLines = existingLines.filter((line) => line.slice(0, line.indexOf(':')).trim() !== key)
+  const nextLines = value === null ? otherLines : [...otherLines, `${key}: "${value}"`]
+
+  if (nextLines.length === 0) {
+    return trimmedContent ? `${trimmedContent}\n` : ''
+  }
+
+  return `---\n${nextLines.join('\n')}\n---\n\n${trimmedContent}\n`
 }

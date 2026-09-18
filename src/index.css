@@ -215,9 +215,27 @@ body {
 }
 
 .resume-header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
   margin-bottom: 1.5rem;
   padding-bottom: 1.25rem;
   border-bottom: 2px solid #e2e8f0;
+}
+
+.resume-header-text {
+  min-width: 0;
+}
+
+.resume-avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 3px solid #4f46e5;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
 
 .resume-name {
@@ -346,6 +364,10 @@ body {
   border-bottom-color: #22c55e;
 }
 
+.template-terminal .resume-avatar {
+  border-color: #22c55e;
+}
+
 .template-terminal .resume-name {
   color: #22c55e;
 }
@@ -405,8 +427,13 @@ body {
 }
 
 .template-classic .resume-header {
+  flex-direction: column;
   text-align: center;
   border-bottom: 1px solid #0f172a;
+}
+
+.template-classic .resume-avatar {
+  border-color: #0f172a;
 }
 
 .template-classic .resume-name {

@@ -56,11 +56,16 @@ function ContactLine({ frontmatter }: { frontmatter: ResumeFrontmatter }) {
 export default function ResumeDocument({ frontmatter, content, templateClassName }: ResumeDocumentProps) {
   return (
     <div className={`resume-page ${templateClassName}`}>
-      {(frontmatter.name || frontmatter.title) && (
+      {(frontmatter.name || frontmatter.title || frontmatter.photo) && (
         <header className="resume-header">
-          {frontmatter.name && <h1 className="resume-name">{frontmatter.name}</h1>}
-          {frontmatter.title && <p className="resume-title">{frontmatter.title}</p>}
-          <ContactLine frontmatter={frontmatter} />
+          {frontmatter.photo && (
+            <img className="resume-avatar" src={frontmatter.photo} alt={frontmatter.name ?? 'Zdjęcie profilowe'} />
+          )}
+          <div className="resume-header-text">
+            {frontmatter.name && <h1 className="resume-name">{frontmatter.name}</h1>}
+            {frontmatter.title && <p className="resume-title">{frontmatter.title}</p>}
+            <ContactLine frontmatter={frontmatter} />
+          </div>
         </header>
       )}
       <div className="resume-body">

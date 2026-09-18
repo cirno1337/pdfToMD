@@ -3,7 +3,8 @@ import Editor from './components/Editor'
 import Preview from './components/Preview'
 import Toolbar, { type MobileTab } from './components/Toolbar'
 import { useLocalStorage } from './hooks/useLocalStorage'
-import { parseResume } from './lib/markdown'
+import { fileToAvatarDataUrl } from './lib/image'
+import { parseResume, upsertFrontmatterField } from './lib/markdown'
 import { sampleResume } from './data/sampleResume'
 import { defaultTemplateId, templates } from './templates'
 import type { TemplateId } from './types'
@@ -30,6 +31,19 @@ export default function App() {
     }
   }
 
+  async function handlePhotoSelected(file: File) {
+    try {
+      const dataUrl = await fileToAvatarDataUrl(file)
+      setMarkdown((current) => upsertFrontmatterField(current, 'photo', dataUrl))
+    } catch {
+      window.alert('Nie udało się przetworzyć zdjęcia. Spróbuj innego pliku.')
+    }
+  }
+
+  function handlePhotoRemove() {
+    setMarkdown((current) => upsertFrontmatterField(current, 'photo', null))
+  }
+
   return (
     <div className="app-shell">
       <Toolbar
@@ -40,6 +54,9 @@ export default function App() {
         onTabChange={setActiveTab}
         onPrint={handlePrint}
         onReset={handleReset}
+        hasPhoto={Boolean(frontmatter.photo)}
+        onPhotoSelected={handlePhotoSelected}
+        onPhotoRemove={handlePhotoRemove}
       />
 
       <main className="main-split">

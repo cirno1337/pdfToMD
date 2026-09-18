@@ -19,6 +19,10 @@ gotowych szablonów graficznych i eksportujesz efekt do PDF-a lub drukujesz.
   PDF-ie pozostaje w pełni zaznaczalny i ostry (bez rasteryzacji).
 - **Automatyczny zapis lokalny** — treść Markdown jest zapisywana w
   `localStorage`, więc odświeżenie karty nie kasuje wpisanych danych.
+- **Zdjęcie profilowe** — przycisk "Dodaj zdjęcie" wgrywa plik graficzny,
+  przycina go do kwadratu i skaluje w przeglądarce, po czym zapisuje jako
+  `data:` URI w polu `photo` frontmattera. Bez backendu i uploadu na serwer —
+  Markdown przechowuje zdjęcie bezpośrednio jako tekst.
 
 ## 🛠️ Stack technologiczny
 
@@ -62,7 +66,8 @@ src/
 ├─ hooks/
 │  └─ useLocalStorage.ts   # trwały stan zsynchronizowany z localStorage
 ├─ lib/
-│  └─ markdown.ts          # parser frontmatter + treści Markdown
+│  ├─ markdown.ts          # parser frontmatter + treści Markdown
+│  └─ image.ts             # przycinanie/skalowanie zdjęcia do awatara (canvas)
 ├─ templates/
 │  └─ index.ts             # rejestr dostępnych szablonów
 ├─ App.tsx
@@ -84,6 +89,7 @@ location: "Warszawa, Polska"
 website: "https://jankowalski.dev"
 github: "jankowalski"
 linkedin: "jan-kowalski"
+photo: "data:image/jpeg;base64,..." # dodawane automatycznie przez przycisk "Dodaj zdjęcie"
 ---
 
 ## O mnie

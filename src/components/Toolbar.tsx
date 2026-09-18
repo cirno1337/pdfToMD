@@ -1,3 +1,5 @@
+import { useRef } from 'react'
+import type { ChangeEvent } from 'react'
 import type { Template, TemplateId } from '../types'
 
 export type MobileTab = 'editor' | 'preview'
@@ -10,6 +12,9 @@ interface ToolbarProps {
   onTabChange: (tab: MobileTab) => void
   onPrint: () => void
   onReset: () => void
+  hasPhoto: boolean
+  onPhotoSelected: (file: File) => void
+  onPhotoRemove: () => void
 }
 
 export default function Toolbar({
@@ -20,7 +25,18 @@ export default function Toolbar({
   onTabChange,
   onPrint,
   onReset,
+  hasPhoto,
+  onPhotoSelected,
+  onPhotoRemove,
 }: ToolbarProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+    if (file) onPhotoSelected(file)
+    event.target.value = ''
+  }
+
   return (
     <header className="toolbar no-print">
       <div className="toolbar-brand">
@@ -60,6 +76,21 @@ export default function Toolbar({
       </div>
 
       <div className="toolbar-actions">
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          className="sr-only"
+          onChange={handleFileChange}
+        />
+        <button type="button" className="btn-secondary" onClick={() => fileInputRef.current?.click()}>
+          {hasPhoto ? 'Zmień zdjęcie' : 'Dodaj zdjęcie'}
+        </button>
+        {hasPhoto && (
+          <button type="button" className="btn-secondary" onClick={onPhotoRemove}>
+            Usuń zdjęcie
+          </button>
+        )}
         <button type="button" className="btn-secondary" onClick={onReset}>
           Przywróć przykład
         </button>

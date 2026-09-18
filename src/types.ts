@@ -1,6 +1,7 @@
 export interface ResumeFrontmatter {
   name?: string
   title?: string
+  photo?: string
   email?: string
   phone?: string
   location?: string
